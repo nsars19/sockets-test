@@ -173,11 +173,20 @@
             return;
           }
 
-          const m = document.getElementById(id);
-          if (m) {
+          if (document.getElementById(id)) {
+            const m = document.getElementById(id);
             m.querySelector(`#other-${id}`).innerText = name;
             m.style.top = `${y + 5}px`;
             m.style.left = `${x + 5}px`;
+          } else {
+            const m = document.createElement("div");
+            m.id = id;
+            m.classList.add("other-mouse");
+            const n = document.createElement("div");
+            n.id = "other-" + id;
+            n.innerText = name.value || `user-${id}`;
+            m.appendChild(n);
+            document.querySelector("body").appendChild(m);
           }
         });
 
