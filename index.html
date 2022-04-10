@@ -171,10 +171,10 @@
           return;
         }
         if (!document.getElementById(id)) {
-          const m = document.createElement("div");
-          m.id = id;
-          m.classList.add("other-mouse");
-          m.style.top = `${y + 5}px`;
+          const m =
+            document.getElementById(id) ?? document.createElement("div");
+
+          if (m) m.style.top = `${y + 5}px`;
           m.style.left = `${x + 5}px`;
 
           const n = document.createElement("div");
@@ -190,8 +190,18 @@
         }
       });
 
+      socket.on("user connect", ({ id }) => {
+        const m = document.getElementById(id) ?? document.createElement("div");
+        m.id = id;
+        m.classList.add("other-mouse");
+      });
+
       socket.on("user disconnect", ({ id }) => {
-        document.body.removeChild(document.getElementById(id));
+        const othermouse = document.getElementById(id);
+        if (othermouse) {
+          document.body.removeChild(othermouse);
+        }
+
         const h3 = document.createElement("h3");
         h3.innerText = `${name.value || "user-" + id} disconnected`;
         h3.style.opacity = 1;

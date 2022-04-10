@@ -11,6 +11,8 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
+  io.emit("user connect", { id: socket.id });
+
   socket.on("chat message", ({ msg, name }) => {
     console.log("message: " + msg, " name: " + name);
     io.emit("chat message", { msg, name });
