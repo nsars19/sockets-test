@@ -75,7 +75,7 @@
         bottom: 2.5rem;
         left: 10px;
       }
-      #mouse,
+      .mouse,
       .other-mouse {
         position: absolute;
         top: 0;
@@ -98,7 +98,7 @@
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <p id="is-typing"></p>
-    <div id="mouse">
+    <div class="mouse">
       <div id="mouse-name"></div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -110,7 +110,7 @@
       const input = document.getElementById("input");
       const name = document.querySelector(".name-input");
       const isTyping = document.getElementById("is-typing");
-      const mouseIcon = document.getElementById("mouse");
+      const mouseIcon = document.querySelector(".mouse");
 
       mouseIcon.querySelector("#mouse-name").innerText = name.value;
 
@@ -158,9 +158,15 @@
           x: e.pageX,
           y: e.pageY,
         });
+
+        mouseIcon.style.top = `${e.pageY + 5}px`;
+        mouseIcon.style.left = `${e.pageX + 5}px`;
       });
 
       socket.on("mousemove", ({ id, x, y, name }) => {
+        if (id === socket.id) {
+          return;
+        }
         if (document.getElementById(id)) {
           const m = document.createElement("div");
           m.id = id;
@@ -173,8 +179,6 @@
           m.appendChild(n);
           document.appendChild(m);
         }
-        mouseIcon.style.top = y + 5 + "px";
-        mouseIcon.style.left = x + 5 + "px";
       });
     </script>
   </body>
