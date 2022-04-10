@@ -115,107 +115,108 @@
       socket.on("connect", () => {
         name.value = localStorage.getItem("username") || `user-${socket.id}`;
         mouseIcon.querySelector("#mouse-name").innerText = name.value;
-      });
 
-      name.addEventListener("change", (e) => {
-        mouseIcon.querySelector("#mouse-name").innerText = e.target.value;
-        localStorage.setItem("username", name.value);
-      });
-
-      form.addEventListener("submit", function (e) {
-        isTyping.innerText = "";
-        e.preventDefault();
-        if (input.value) {
-          socket.emit("chat message", {
-            msg: input.value,
-            name: name.value || `user-${socket.id}`,
-          });
-          input.value = "";
-        }
-      });
-
-      socket.on("chat message", ({ msg, name }) => {
-        const item = document.createElement("li");
-        item.textContent = `${name}: ${msg}`;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-
-      document.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") return;
-        socket.emit("keydown", name.value);
-      });
-
-      socket.on("keydown", (user) => {
-        if (isTyping.innerText.includes(user)) {
-          return;
-        }
-
-        isTyping.innerText = `${user} is typing...`;
-        setTimeout(() => {
-          isTyping.innerText = "";
-        }, 1400);
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        socket.emit("mousemove", {
-          id: socket.id,
-          name: name.value,
-          x: e.pageX,
-          y: e.pageY,
+        name.addEventListener("change", (e) => {
+          mouseIcon.querySelector("#mouse-name").innerText = e.target.value;
+          localStorage.setItem("username", name.value);
         });
 
-        mouseIcon.style.top = `${e.pageY + 5}px`;
-        mouseIcon.style.left = `${e.pageX + 5}px`;
-      });
+        form.addEventListener("submit", function (e) {
+          isTyping.innerText = "";
+          e.preventDefault();
+          if (input.value) {
+            socket.emit("chat message", {
+              msg: input.value,
+              name: name.value || `user-${socket.id}`,
+            });
+            input.value = "";
+          }
+        });
 
-      socket.on("mousemove", ({ id, x, y, name }) => {
-        if (id === socket.id) {
-          return;
-        }
+        socket.on("chat message", ({ msg, name }) => {
+          const item = document.createElement("li");
+          item.textContent = `${name}: ${msg}`;
+          messages.appendChild(item);
+          window.scrollTo(0, document.body.scrollHeight);
+        });
 
-        const m = document.getElementById(id);
-        if (m) {
-          m.querySelector(`#other-${id}`).innerText = name;
-          m.style.top = `${y + 5}px`;
-          m.style.left = `${x + 5}px`;
-        }
-      });
+        document.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") return;
+          socket.emit("keydown", name.value);
+        });
 
-      socket.on("user connect", ({ id }) => {
-        console.log(`user ${id} connected`);
-        if (socket.id === id) return;
-        const m = document.getElementById(id) ?? document.createElement("div");
-        m.id = id;
-        m.classList.add("other-mouse");
-        const n = document.createElement("div");
-        n.id = "other-" + id;
-        n.innerText = name.value || `user-${id}`;
-        m.appendChild(n);
-        document.querySelector("body").appendChild(m);
-      });
+        socket.on("keydown", (user) => {
+          if (isTyping.innerText.includes(user)) {
+            return;
+          }
 
-      socket.on("user disconnect", ({ id }) => {
-        console.log(`user ${id} disconnected`);
-        const othermouse = document.getElementById(id);
-        if (othermouse) {
-          document.body.removeChild(othermouse);
-        }
+          isTyping.innerText = `${user} is typing...`;
+          setTimeout(() => {
+            isTyping.innerText = "";
+          }, 1400);
+        });
 
-        const h3 = document.createElement("h3");
-        h3.innerText = `${"user-" + id} disconnected`;
-        h3.style.opacity = 1;
-        h3.style.transition = "opacity 300ms ease";
+        document.addEventListener("mousemove", (e) => {
+          socket.emit("mousemove", {
+            id: socket.id,
+            name: name.value,
+            x: e.pageX,
+            y: e.pageY,
+          });
 
-        document.body.appendChild(h3);
+          mouseIcon.style.top = `${e.pageY + 5}px`;
+          mouseIcon.style.left = `${e.pageX + 5}px`;
+        });
 
-        setTimeout(() => {
-          h3.style.opacity = 0;
-        }, 2000);
+        socket.on("mousemove", ({ id, x, y, name }) => {
+          if (id === socket.id) {
+            return;
+          }
 
-        setTimeout(() => {
-          h3.style.display = "none";
-        }, 2500);
+          const m = document.getElementById(id);
+          if (m) {
+            m.querySelector(`#other-${id}`).innerText = name;
+            m.style.top = `${y + 5}px`;
+            m.style.left = `${x + 5}px`;
+          }
+        });
+
+        socket.on("user connect", ({ id }) => {
+          console.log(`user ${id} connected`);
+          if (socket.id === id) return;
+          const m =
+            document.getElementById(id) ?? document.createElement("div");
+          m.id = id;
+          m.classList.add("other-mouse");
+          const n = document.createElement("div");
+          n.id = "other-" + id;
+          n.innerText = name.value || `user-${id}`;
+          m.appendChild(n);
+          document.querySelector("body").appendChild(m);
+        });
+
+        socket.on("user disconnect", ({ id }) => {
+          console.log(`user ${id} disconnected`);
+          const othermouse = document.getElementById(id);
+          if (othermouse) {
+            document.body.removeChild(othermouse);
+          }
+
+          const h3 = document.createElement("h3");
+          h3.innerText = `${"user-" + id} disconnected`;
+          h3.style.opacity = 1;
+          h3.style.transition = "opacity 300ms ease";
+
+          document.body.appendChild(h3);
+
+          setTimeout(() => {
+            h3.style.opacity = 0;
+          }, 2000);
+
+          setTimeout(() => {
+            h3.style.display = "none";
+          }, 2500);
+        });
       });
     </script>
   </body>
