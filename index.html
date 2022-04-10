@@ -115,7 +115,6 @@
       mouseIcon.querySelector("#mouse-name").innerText = name.value;
 
       name.addEventListener("change", (e) => {
-        console.log(e);
         mouseIcon.querySelector("#mouse-name").innerText = e.target.value;
       });
 
@@ -170,33 +169,27 @@
         if (id === socket.id) {
           return;
         }
-        if (!document.getElementById(id)) {
-          const m =
-            document.getElementById(id) ?? document.createElement("div");
 
-          if (m) m.style.top = `${y + 5}px`;
-          m.style.left = `${x + 5}px`;
-
-          const n = document.createElement("div");
-          n.id = "other-" + id;
-          n.innerText = name;
-          m.appendChild(n);
-          document.querySelector("body").appendChild(m);
-        } else {
-          const m = document.getElementById(id);
-          m.querySelector(`#other-${id}`).innerText = name;
-          m.style.top = `${y + 5}px`;
-          m.style.left = `${x + 5}px`;
-        }
+        const m = document.getElementById(id);
+        m.querySelector(`#other-${id}`).innerText = name;
+        m.style.top = `${y + 5}px`;
+        m.style.left = `${x + 5}px`;
       });
 
       socket.on("user connect", ({ id }) => {
+        console.log(`user ${id} connected`);
         const m = document.getElementById(id) ?? document.createElement("div");
         m.id = id;
         m.classList.add("other-mouse");
+        const n = document.createElement("div");
+        n.id = "other-" + id;
+        n.innerText = name.value || `user-${id}`;
+        m.appendChild(n);
+        document.querySelector("body").appendChild(m);
       });
 
       socket.on("user disconnect", ({ id }) => {
+        console.log(`user ${id} disconnected`);
         const othermouse = document.getElementById(id);
         if (othermouse) {
           document.body.removeChild(othermouse);
