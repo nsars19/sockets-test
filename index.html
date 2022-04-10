@@ -112,10 +112,14 @@
       const isTyping = document.getElementById("is-typing");
       const mouseIcon = document.querySelector(".mouse");
 
-      mouseIcon.querySelector("#mouse-name").innerText = name.value;
+      socket.on("connect", () => {
+        name.value = localStorage.getItem("username") || `user-${socket.id}`;
+        mouseIcon.querySelector("#mouse-name").innerText = name.value;
+      });
 
       name.addEventListener("change", (e) => {
         mouseIcon.querySelector("#mouse-name").innerText = e.target.value;
+        localStorage.setItem("username", name.value);
       });
 
       form.addEventListener("submit", function (e) {
@@ -171,9 +175,11 @@
         }
 
         const m = document.getElementById(id);
-        m.querySelector(`#other-${id}`).innerText = name;
-        m.style.top = `${y + 5}px`;
-        m.style.left = `${x + 5}px`;
+        if (m) {
+          m.querySelector(`#other-${id}`).innerText = name;
+          m.style.top = `${y + 5}px`;
+          m.style.left = `${x + 5}px`;
+        }
       });
 
       socket.on("user connect", ({ id }) => {
@@ -197,7 +203,7 @@
         }
 
         const h3 = document.createElement("h3");
-        h3.innerText = `${name.value || "user-" + id} disconnected`;
+        h3.innerText = `${"user-" + id} disconnected`;
         h3.style.opacity = 1;
         h3.style.transition = "opacity 300ms ease";
 
