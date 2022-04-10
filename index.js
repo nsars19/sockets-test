@@ -29,6 +29,10 @@ io.on("connection", (socket) => {
   socket.on("mousemove", ({ id, name, x, y }) => {
     io.emit("mousemove", { id, name, x, y });
   });
+
+  socket.on("disconnect", ({ id }) => {
+    io.emit("user disconnect", { id });
+  });
 });
 
 server.listen(process.env.PORT || 3002, () => {
