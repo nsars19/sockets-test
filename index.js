@@ -25,6 +25,10 @@ io.on("connection", (socket) => {
     console.log("keyup by: " + username);
     io.emit("keyup", username);
   });
+
+  socket.on("mousemove", ({ id, name, x, y }) => {
+    io.emit("mousemove", { id, name, x, y });
+  });
 });
 
 server.listen(process.env.PORT || 3002, () => {

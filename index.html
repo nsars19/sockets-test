@@ -75,6 +75,17 @@
         bottom: 2.5rem;
         left: 10px;
       }
+      #mouse,
+      .other-mouse {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 8px;
+        border-radius: 6px;
+        background: #49a7d3;
+        color: #f3f3f3;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body>
@@ -87,6 +98,9 @@
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
     <p id="is-typing"></p>
+    <div id="mouse">
+      <div id="mouse-name"></div>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
@@ -96,6 +110,14 @@
       const input = document.getElementById("input");
       const name = document.querySelector(".name-input");
       const isTyping = document.getElementById("is-typing");
+      const mouseIcon = document.getElementById("mouse");
+
+      mouseIcon.querySelector("#mouse-name").innerText = name.value;
+
+      name.addEventListener("change", (e) => {
+        console.log(e);
+        mouseIcon.querySelector("#mouse-name").innerText = e.target.value;
+      });
 
       form.addEventListener("submit", function (e) {
         isTyping.innerText = "";
@@ -129,12 +151,30 @@
         }, 1400);
       });
 
-      //document.addEventListener("keyup", () => {
-      //  socket.emit("keyup", name.value);
-      //});
+      document.addEventListener("mousemove", (e) => {
+        socket.emit("mousemove", {
+          id: socket.id,
+          name: name.value,
+          x: e.pageX,
+          y: e.pageY,
+        });
+      });
 
-      socket.on("keyup", (user) => {
-        isTyping.innerText = "";
+      socket.on("mousemove", ({ id, x, y, name }) => {
+        if (document.getElementById(id)) {
+          const m = document.createElement("div");
+          m.id = id;
+          m.classList.add("other-mouse");
+          m.style.top = `${y + 5}px`;
+          m.style.left = `${x + 5}px`;
+
+          const n = document.createElement("div");
+          n.innerText = name;
+          m.appendChild(n);
+          document.appendChild(m);
+        }
+        mouseIcon.style.top = y + 5 + "px";
+        mouseIcon.style.left = x + 5 + "px";
       });
     </script>
   </body>
