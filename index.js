@@ -1,8 +1,9 @@
 const express = require("express");
-const app = express();
 const http = require("http");
-const server = http.createServer(app);
 const { Server } = require("socket.io");
+
+const app = express();
+const server = http.createServer(app);
 const io = new Server(server);
 
 app.get("/", (req, res) => {
@@ -12,7 +13,7 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   socket.on("chat message", ({ msg, name }) => {
     console.log("message: " + msg, " name: " + name);
-    io.emit("chat message", `${name}: ${msg}`);
+    io.emit("chat message", { msg, name });
   });
 
   socket.on("keydown", (username) => {
@@ -26,6 +27,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(process.env.PORT || 3000, () => {
-  console.log("listening on *:3002");
+server.listen(process.env.PORT || 3002, () => {
+  console.log("listening on *:" + process.env.PORT || 3002);
 });

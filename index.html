@@ -98,6 +98,7 @@
       const isTyping = document.getElementById("is-typing");
 
       form.addEventListener("submit", function (e) {
+        isTyping.innerText = "";
         e.preventDefault();
         if (input.value) {
           socket.emit("chat message", { msg: input.value, name: name.value });
@@ -105,24 +106,32 @@
         }
       });
 
-      socket.on("chat message", function (msg) {
+      socket.on("chat message", ({ msg, name }) => {
         const item = document.createElement("li");
-        item.textContent = msg;
+        item.textContent = `${name}: ${msg}`;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
 
-      document.addEventListener("keydown", () => {
+      document.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") return;
         socket.emit("keydown", name.value);
       });
 
       socket.on("keydown", (user) => {
+        if (isTyping.innerText.includes(user)) {
+          return;
+        }
+
         isTyping.innerText = `${user} is typing...`;
+        setTimeout(() => {
+          isTyping.innerText = "";
+        }, 1400);
       });
 
-      document.addEventListener("keyup", () => {
-        socket.emit("keyup", name.value);
-      });
+      //document.addEventListener("keyup", () => {
+      //  socket.emit("keyup", name.value);
+      //});
 
       socket.on("keyup", (user) => {
         isTyping.innerText = "";
