@@ -117,7 +117,7 @@
       });
 
       socket.on("keydown", (user) => {
-        istyping.innerText = `${user} is typing...`;
+        isTyping.innerText = `${user} is typing...`;
       });
 
       document.addEventListener("keyup", () => {
@@ -125,7 +125,7 @@
       });
 
       socket.on("keyup", (user) => {
-        istyping.innerText = "";
+        isTyping.innerText = "";
       });
     </script>
   </body>
