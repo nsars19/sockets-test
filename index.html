@@ -195,7 +195,7 @@
           document.querySelector("body").appendChild(m);
         });
 
-        socket.on("user disconnect", ({ id }) => {
+        socket.on("user disconnect", ({ id, name }) => {
           console.log(`user ${id} disconnected`);
           const othermouse = document.getElementById(id);
           if (othermouse) {
@@ -203,7 +203,7 @@
           }
 
           const h3 = document.createElement("h3");
-          h3.innerText = `${"user-" + id} disconnected`;
+          h3.innerText = `${name} disconnected`;
           h3.style.opacity = 1;
           h3.style.transition = "opacity 300ms ease";
 
@@ -216,6 +216,13 @@
           setTimeout(() => {
             h3.style.display = "none";
           }, 2500);
+        });
+
+        window.addEventListener("beforeunload", async () => {
+          await fetch(`/user-leaving?id=${socket.id}&name=testServer`, {
+            method: "GET",
+          });
+          return null;
         });
       });
     </script>
