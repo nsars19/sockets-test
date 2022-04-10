@@ -178,6 +178,7 @@
 
       socket.on("user connect", ({ id }) => {
         console.log(`user ${id} connected`);
+        if (socket.id === id) return;
         const m = document.getElementById(id) ?? document.createElement("div");
         m.id = id;
         m.classList.add("other-mouse");
