@@ -167,7 +167,7 @@
         if (id === socket.id) {
           return;
         }
-        if (document.getElementById(id)) {
+        if (!document.getElementById(id)) {
           const m = document.createElement("div");
           m.id = id;
           m.classList.add("other-mouse");
@@ -175,9 +175,16 @@
           m.style.left = `${x + 5}px`;
 
           const n = document.createElement("div");
+          n.id = "other-" + id;
           n.innerText = name;
           m.appendChild(n);
           document.appendChild(m);
+        } else {
+          const m = document.getElementById(id);
+          m.querySelector(`#other-${id}`).innerText = name;
+          m.style.top = `${y + 5}px`;
+          m.style.left = `${x + 5}px`;
+          m.querySelector();
         }
       });
     </script>
