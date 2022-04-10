@@ -178,13 +178,12 @@
           n.id = "other-" + id;
           n.innerText = name;
           m.appendChild(n);
-          document.appendChild(m);
+          document.querySelector("body").appendChild(m);
         } else {
           const m = document.getElementById(id);
           m.querySelector(`#other-${id}`).innerText = name;
           m.style.top = `${y + 5}px`;
           m.style.left = `${x + 5}px`;
-          m.querySelector();
         }
       });
     </script>
